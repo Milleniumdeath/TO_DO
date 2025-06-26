@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script defer src="{% static 'app.js' %}"></script>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>To-Do List ✅</h1>
+      <div class="user-info">
+        <button class="btn user">👤 User</button>
+        <a href="./login.html" class="btn logout">🔓 Log out</a>
+        <button class="btn theme-toggle" onclick="toggleTheme()">🌙</button>
+      </div>
+    </header>
+
+    <section class="task-add">
+      <form id="task-form" method="post">
+        {%csrf_token%}
+        <div class="form-row">
+          <input type="text" name="title" placeholder="Title..." required>
+          <input type="date" name="deadline" >
+          <select name="status">
+            {% for choice in status_choices %}
+              <option >{{ choice.0 }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-row">
+          <input type="text" name="details" placeholder="Details ...">
+          <button type="submit" class="btn btn-add">➕ Add Task</button>
+        </div>
+      </form>
+    </section>
+
+    <hr>
+
+    <section class="task-list">
+      <article class="task-card">
+        {% for task in tasks %}
+          <div class="task-header">
+            <span class="task-title" {% if task.status == status.choices.2.0 %} style="text-decoration: line-through;" {%endif%}>📌 {{task.title}}</span>
+            <div class="task-controls">
+              <input type="text"  value="{{ task.status }} " readonly
+                {% if task.status == status_choices.0.0 %} style="background-color: gray; color: white; text-align: center;"
+                {% elif task.status == status_choices.1.0 %} style="background-color: blue; color: white; text-align: center;"
+                {% elif task.status == status_choices.2.0 %} style="background-color: green; color: white; text-align: center;" {% endif%}
+              >
+              <input type="date" value="{{task.deadline|date:'Y-m-d'}}" readonly>
+              <a href="{% url 'task-update' task.id %}" class="btn edit">✏️ Edit</a>
+              <a href="#" class="btn delete" onclick="confirmDelete({{ task.pk }})">🗑️ Delete</a>
+            </div>
+          </div>
+          {% if task.detail%}
+            <div class="task-details" {% if task.status == status.choices.2.0 %} style="text-decoration: line-through;" {%endif%} >
+
+              {{ task.detail}}
+
+            </div>
+          {% endif %}
+          <hr>
+        {% endfor%}
+      </article>
+    </section>
+  </div>
+<script>
+  function confirmDelete(taskId) {
+    const confirmed = confirm("🛑 Rostdan ham ushbu topshiriqni o‘chirmoqchimisiz?");
+    if (confirmed) {
+      window.location.href = "{% url 'task-delete' 0 %}".replace("0", taskId);
+    } else {
+      window.location.href = "/";
+    }
+  }
+</script>
+</body>
+</html>
