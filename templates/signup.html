@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+{%load static%}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="{% static 'style1.css'%}">
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-box">
+      <h2>Create An User</h2>
+      <p>Create an account to enjoy all services</p>
+      <form onsubmit="return validateForm()" method="post">
+        {%csrf_token%}
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" id="password" placeholder="Password" required>
+        <input type="password" name="confirm_password" id="confirm" placeholder="Confirm Password" required>
+        <button type="submit">Sign up</button>
+      </form>
+      <p class="bottom-text">Already have an account? <a href="{% url 'login'%}">Log in</a></p>
+    </div>
+  </div>
+
+  <script>
+<!--    function validateForm() {-->
+<!--      const pw = document.getElementById("password").value;-->
+<!--      const confirm = document.getElementById("confirm").value;-->
+<!--      if (pw !== confirm) {-->
+<!--        alert("Passwords do not match!");-->
+<!--        return false;-->
+<!--      }-->
+<!--      return true;-->
+<!--    }-->
+    function validateForm() {
+    const pw = document.getElementById("password").value;
+    const confirm = document.getElementById("confirm").value;
+
+    if (pw !== confirm) {
+      alert("❌ Parollar mos emas!");
+      return false;
+    }
+
+    // Muvaffaqiyatli yozuvni ko‘rsatish
+    const msg = document.getElementById("success-msg");
+    msg.classList.add("show");
+
+    // 3 sekunddan so‘ng yashirish (ixtiyoriy)
+    setTimeout(() => {
+      msg.classList.remove("show");
+    }, 3000);
+
+    return true; // Django form submission
+  }
+  </script>
+</body>
+</html>
